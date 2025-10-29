@@ -1,0 +1,22 @@
+{
+  "validUser": {
+    "email": "admin@yourstore.com",
+    "password": "admin"
+  },
+  "invalidUser": {
+    "email": "wrong@user.com",
+    "password": "wrongpass"
+  },
+  "emptyUser": {
+    "email": "",
+    "password": ""
+  },
+  "invalidEmailFormat": {
+    "email": "abc",
+    "password": "anything"
+  },
+  "sqlInjection": {
+    "email": "' OR '1'='1",
+    "password": "' OR '1'='1"
+  }
+}
