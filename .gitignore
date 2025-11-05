@@ -6,3 +6,10 @@
 # /blob-report/
 # /playwright/.cache/
 # /playwright/.auth/
+
+# ignore local env
+.env
+# test data
+testData
+#Utils
+utils
