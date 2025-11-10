@@ -62,7 +62,7 @@
 // tests/login.spec.ts
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../Pages/login.page';
-import { loginData } from '../utils/env';
+import ENV from '../utils/env';
 
 test.describe('Login Tests - nopCommerce 4.90', () => {
   let loginPage: LoginPage;
@@ -73,21 +73,20 @@ test.describe('Login Tests - nopCommerce 4.90', () => {
   });
 
   test('Valid login should redirect to dashboard', async () => {
-    await loginPage.login(loginData.validUser.email, loginData.validUser.password);
+    await loginPage.login(ENV.VALID_USER_EMAIL, ENV.VALID_USER_PASSWORD);
     await loginPage.verifyLoginSuccess();
   });
 
   test('Invalid login should show error message', async () => {
-    await loginPage.login(loginData.invalidUser.email, loginData.invalidUser.password);
+    await loginPage.login(ENV.INVALID_USER_EMAIL, ENV.INVALID_USER_PASSWORD);
     await loginPage.verifyLoginFailure();
 
-    // Verify the error message content
     const errorText = await loginPage.getGeneralErrorText();
     expect.soft(errorText).toContain('Login was unsuccessful');
   });
 
   test('Empty credentials should show field validation errors', async () => {
-    await loginPage.login(loginData.emptyUser.email, loginData.emptyUser.password);
+    await loginPage.login(ENV.EMPTY_USER_EMAIL, ENV.EMPTY_USER_PASSWORD);
 
     await test.step('Verify email field error message', async () => {
       const actualError = await loginPage.getEmailErrorText();
@@ -98,19 +97,17 @@ test.describe('Login Tests - nopCommerce 4.90', () => {
   });
 
   test('Invalid email format should show validation error', async () => {
-    await loginPage.login(loginData.invalidEmailFormat.email, loginData.invalidEmailFormat.password);
+    await loginPage.login(ENV.INVALID_EMAIL_FORMAT, ENV.INVALID_EMAIL_PASSWORD);
 
     await test.step('Verify invalid email format error message', async () => {
       const actualError = await loginPage.getEmailErrorText();
       console.log('Email format error message:', actualError);
-
-      // Common email validation messages
       expect.soft(actualError).toMatch(/Please enter a valid email address|Wrong email/i);
     });
   });
 
   test('SQL injection attempt should show security error', async () => {
-    await loginPage.login(loginData.sqlInjection.email, loginData.sqlInjection.password);
+    await loginPage.login(ENV.SQLINJECTION_EMAIL, ENV.SQLINJECTION_PASSWORD);
 
     await test.step('Verify SQL injection error message', async () => {
       const actualError = await loginPage.getSQLLoginErrorText();

@@ -32,26 +32,3 @@ export default class ENV {
   public static SQLINJECTION_EMAIL = readEnv("SQLINJECTION_EMAIL");
   public static SQLINJECTION_PASSWORD = readEnv("SQLINJECTION_PASSWORD");
 }
-
-export const loginData = {
-  validUser: {
-    email: ENV.VALID_USER_EMAIL,
-    password: ENV.VALID_USER_PASSWORD,
-  },
-  invalidUser: {
-    email: ENV.INVALID_USER_EMAIL,
-    password: ENV.INVALID_USER_PASSWORD,
-  },
-  emptyUser: {
-    email: ENV.EMPTY_USER_EMAIL,
-    password: ENV.EMPTY_USER_PASSWORD,
-  },
-  invalidEmailFormat: {
-    email: ENV.INVALID_EMAIL_FORMAT,
-    password: ENV.INVALID_EMAIL_PASSWORD,
-  },
-  sqlInjection: {
-    email: ENV.SQLINJECTION_EMAIL,
-    password: ENV.SQLINJECTION_PASSWORD,
-  },
-};
