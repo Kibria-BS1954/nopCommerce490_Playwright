@@ -65,66 +65,58 @@ import { LoginPage } from '../Pages/login.page';
 import { loginData } from '../utils/env';
 
 test.describe('Login Tests - nopCommerce 4.90', () => {
+  let loginPage: LoginPage;
 
-  test('Valid login should redirect to dashboard', async ({ page }) => {
-    const loginPage = new LoginPage(page);
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
     await loginPage.goto();
+  });
+
+  test('Valid login should redirect to dashboard', async () => {
     await loginPage.login(loginData.validUser.email, loginData.validUser.password);
     await loginPage.verifyLoginSuccess();
   });
 
-  test('Invalid login should show error message', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+  test('Invalid login should show error message', async () => {
     await loginPage.login(loginData.invalidUser.email, loginData.invalidUser.password);
     await loginPage.verifyLoginFailure();
-    
+
     // Verify the error message content
     const errorText = await loginPage.getGeneralErrorText();
     expect.soft(errorText).toContain('Login was unsuccessful');
   });
 
-  test('Empty credentials should show field validation errors', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+  test('Empty credentials should show field validation errors', async () => {
     await loginPage.login(loginData.emptyUser.email, loginData.emptyUser.password);
-    
+
     await test.step('Verify email field error message', async () => {
       const actualError = await loginPage.getEmailErrorText();
       console.log('Email field error message:', actualError);
-      //console.log('Password field error message:', errors.passwordError);
       const expectedError = 'Please enter your email';
-      // These are the expected validation messages for empty fields
-      // expect(actualError).toBe(expectedError);
-       expect.soft(actualError).toEqual(expectedError);
+      expect.soft(actualError).toEqual(expectedError);
     });
   });
 
-  test('Invalid email format should show validation error', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+  test('Invalid email format should show validation error', async () => {
     await loginPage.login(loginData.invalidEmailFormat.email, loginData.invalidEmailFormat.password);
-    
+
     await test.step('Verify invalid email format error message', async () => {
       const actualError = await loginPage.getEmailErrorText();
       console.log('Email format error message:', actualError);
-      
+
       // Common email validation messages
       expect.soft(actualError).toMatch(/Please enter a valid email address|Wrong email/i);
     });
   });
 
-  test('SQL injection attempt should show security error', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
+  test('SQL injection attempt should show security error', async () => {
     await loginPage.login(loginData.sqlInjection.email, loginData.sqlInjection.password);
-    
+
     await test.step('Verify SQL injection error message', async () => {
-      // SQL injection might show as invalid login or specific security message
       const actualError = await loginPage.getSQLLoginErrorText();
-       console.log('SQL injection error message:', actualError);
-       const expectedError = actualError;
-       expect.soft(actualError).toContain(expectedError);
+      console.log('SQL injection error message:', actualError);
+      const expectedError = actualError;
+      expect.soft(actualError).toContain(expectedError);
     });
   });
 });

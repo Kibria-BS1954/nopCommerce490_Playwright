@@ -8,8 +8,10 @@
 # /playwright/.auth/
 
 # ignore local env
+# Environment variables
 .env
-# test data
-testData
-#Utils
-utils
+.env.*
+!.env.example
+# Test data (if it contains sensitive information)
+/testdata/
+/test-data/
