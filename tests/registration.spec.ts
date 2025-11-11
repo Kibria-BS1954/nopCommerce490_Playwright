@@ -7,7 +7,7 @@ test.describe('Registration Tests - nopCommerce', () => {
 
     test.beforeEach(async ({ page }) => {
         registrationPage = new RegistrationPage(page);
-        await registrationPage.navigateToRegister();
+        await registrationPage.goto();
     });
 
     // POSITIVE SCENARIOS
@@ -18,9 +18,9 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.selectGender(userData.gender);
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillCompanyDetails(userData.companyName);
-            await registrationPage.toggleNewsletter(userData.newsletter);
+            await registrationPage.setNewsletter(userData.newsletter);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify successful registration', async () => {
@@ -36,7 +36,7 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.selectGender(userData.gender);
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify registration success with minimal data', async () => {
@@ -52,7 +52,7 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.selectGender(userData.gender);
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify field validation errors', async () => {
@@ -70,7 +70,7 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.selectGender(userData.gender);
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify email validation error', async () => {
@@ -85,7 +85,7 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.selectGender(userData.gender);
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify password mismatch error', async () => {
@@ -100,7 +100,7 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.selectGender(userData.gender);
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify password strength requirements', async () => {
@@ -118,7 +118,7 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillCompanyDetails(userData.companyName);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify registration handles long inputs', async () => {
@@ -135,7 +135,7 @@ test.describe('Registration Tests - nopCommerce', () => {
             await registrationPage.selectGender(userData.gender);
             await registrationPage.fillPersonalDetails(userData.firstName, userData.lastName, userData.email);
             await registrationPage.fillPasswordDetails(userData.password, userData.confirmPassword);
-            await registrationPage.clickRegister();
+            await registrationPage.submit();
         });
 
         await test.step('Verify duplicate email error', async () => {

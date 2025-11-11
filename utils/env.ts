@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 
-const envPath = path.resolve(process.cwd(), ".env/.env.login");
+const envPath = path.resolve(process.cwd(), ".env/.env.data");
 
 if (fs.existsSync(envPath)) {
   dotenv.config({ path: envPath });
@@ -31,4 +31,9 @@ export default class ENV {
 
   public static SQLINJECTION_EMAIL = readEnv("SQLINJECTION_EMAIL");
   public static SQLINJECTION_PASSWORD = readEnv("SQLINJECTION_PASSWORD");
+
+  public static REGISTRATION_EMAIL_DOMAIN = readEnv(
+    "REGISTRATION_EMAIL_DOMAIN",
+    "example.com"
+  );
 }

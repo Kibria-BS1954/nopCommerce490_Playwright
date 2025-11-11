@@ -21,13 +21,13 @@ export class LoginPage {
     this.logoutLink = page.locator('a[href="/logout"]');
     this.dashboardHeader = page.locator('//img[@alt="Your store name"]');
     this.loginLink = page.locator('//a[text()="Log in"]');
-    this.errorMessage = page.locator('.message-error');
+    this.errorMessage = page.locator('//div[@class="message-error validation-summary-errors"]');
     this.emailError = page.locator('//span[@id="Email-error"]');
     this.passwordError = page.locator('#Password-error');
   }
 
   async goto() {
-    const baseUrl = ENV.BASE_URL;
+    const baseUrl = ENV.BASE_URL || 'http://localhost:8095';
     if (!baseUrl) {
       throw new Error('BASE_URL environment variable is not set.');
     }
@@ -59,7 +59,7 @@ export class LoginPage {
   }
 
   async getGeneralErrorText(): Promise<string | null> {
-    return this.errorMessage.textContent();
+    return await this.errorMessage.textContent();
   }
 
   async getSQLLoginErrorText(): Promise<string | null> {

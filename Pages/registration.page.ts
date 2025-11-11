@@ -1,107 +1,104 @@
-import { Page, expect } from '@playwright/test';
+import { Page, expect, Locator } from '@playwright/test';
+import ENV from '../utils/env';
 
 export class RegistrationPage {
-    readonly page: Page;
+  readonly page: Page;
 
-    // Locators
-    readonly genderMale = '#gender-male';
-    readonly genderFemale = '#gender-female';
-    readonly firstName = '#FirstName';
-    readonly lastName = '#LastName';
-    readonly email = '#Email';
-    readonly companyName = '#Company';
-    readonly newsletter = '//label[@for="NewsLetterSubscriptions_1__IsActive"]';
-    readonly password = '#Password';
-    readonly confirmPassword = '#ConfirmPassword';
-    readonly registerButton = '#register-button';
-    readonly successMessage = '.result';
-    readonly errorMessage = '.message-error';
-    readonly fieldValidationErrors = '.field-validation-error';
+  readonly genderMale: Locator;
+  readonly genderFemale: Locator;
+  readonly firstName: Locator;
+  readonly lastName: Locator;
+  readonly email: Locator;
+  readonly companyName: Locator;
+  readonly newsletter: Locator;
+  readonly password: Locator;
+  readonly confirmPassword: Locator;
+  readonly registerButton: Locator;
+  readonly successMessage: Locator;
+  readonly errorMessage: Locator;
+  readonly fieldValidationErrors: Locator;
 
-    constructor(page: Page) {
-        this.page = page;
+  constructor(page: Page) {
+    this.page = page;
+    this.genderMale = page.locator('#gender-male');
+    this.genderFemale = page.locator('#gender-female');
+    this.firstName = page.locator('#FirstName');
+    this.lastName = page.locator('#LastName');
+    this.email = page.locator('#Email');
+    this.companyName = page.locator('#Company');
+    this.newsletter = page.locator('//label[@for="NewsLetterSubscriptions_1__IsActive"]');
+    this.password = page.locator('#Password');
+    this.confirmPassword = page.locator('#ConfirmPassword');
+    this.registerButton = page.locator('#register-button');
+    this.successMessage = page.locator('.result');
+    this.errorMessage = page.locator('.message-error');
+    this.fieldValidationErrors = page.locator('.field-validation-error');
+  }
+
+  async goto() {
+    const baseUrl = ENV.BASE_URL || 'http://localhost:8095';
+    // const baseUrl = ENV.BASE_URL;
+    await this.page.goto(`${baseUrl}/register?returnUrl=%2F`);
+  }
+
+  async selectGender(gender: 'male' | 'female') {
+    const target = gender === 'male' ? this.genderMale : this.genderFemale;
+    await target.check();
+  }
+
+  async fillPersonalDetails(firstName: string, lastName: string, email: string) {
+    await this.firstName.fill(firstName);
+    await this.lastName.fill(lastName);
+    await this.email.fill(email);
+  }
+
+  async fillCompanyDetails(companyName: string) {
+    await this.companyName.fill(companyName);
+  }
+
+  async setNewsletter(subscribe: boolean) {
+    if (subscribe) {
+      await this.newsletter.check();
+    } else {
+      await this.newsletter.uncheck();
     }
+  }
 
-    async navigateToRegister() {
-        await this.page.goto('http://localhost:8095/register?returnUrl=%2F');
-    }
+  async fillPasswordDetails(password: string, confirmPassword: string) {
+    await this.password.fill(password);
+    await this.confirmPassword.fill(confirmPassword);
+  }
 
-    async selectGender(gender: 'male' | 'female') {
-        if (gender === 'male') {
-            await this.page.click(this.genderMale);
-        } else {
-            await this.page.click(this.genderFemale);
-        }
-    }
+  async submit() {
+    await this.registerButton.click();
+  }
 
-    async fillPersonalDetails(firstName: string, lastName: string, email: string) {
-        await this.page.fill(this.firstName, firstName);
-        await this.page.fill(this.lastName, lastName);
-        await this.page.fill(this.email, email);
-    }
+  async verifyRegistrationSuccess() {
+    await expect(this.successMessage).toBeVisible();
+    await expect(this.successMessage).toContainText('Your registration completed');
+  }
 
-    async fillCompanyDetails(companyName: string) {
-        await this.page.fill(this.companyName, companyName);
-    }
+  async verifyErrorMessageContains(text: string) {
+    await expect(this.errorMessage).toContainText(text);
+  }
 
-    async toggleNewsletter(subscribe: boolean) {
-        const isChecked = await this.page.isChecked(this.newsletter);
-        if (subscribe !== isChecked) {
-            await this.page.click(this.newsletter);
-        }
-    }
+  async verifyFieldErrorCount(expectedCount: number) {
+    await expect(this.fieldValidationErrors).toHaveCount(expectedCount);
+  }
 
-    async fillPasswordDetails(password: string, confirmPassword: string) {
-        await this.page.fill(this.password, password);
-        await this.page.fill(this.confirmPassword, confirmPassword);
-    }
+  async verifySpecificFieldError(field: 'firstName' | 'lastName' | 'email' | 'password' | 'confirmPassword', expectedError: string) {
+    const selectors: Record<typeof field, string> = {
+      firstName: '#FirstName-error',
+      lastName: '#LastName-error',
+      email: '#Email-error',
+      password: '#Password-error',
+      confirmPassword: '#ConfirmPassword-error'
+    };
 
-    async clickRegister() {
-        await this.page.click(this.registerButton);
-    }
+    await expect(this.page.locator(selectors[field])).toHaveText(expectedError);
+  }
 
-    // New assertion methods - Different from login approach
-    async verifyRegistrationSuccess() {
-        await expect(this.page.locator(this.successMessage)).toBeVisible();
-        await expect(this.page.locator(this.successMessage)).toContainText('Your registration completed');
-    }
-
-    async verifyErrorMessageContains(text: string) {
-        await expect(this.page.locator(this.errorMessage)).toContainText(text);
-    }
-
-    async verifyFieldErrorCount(expectedCount: number) {
-        const errors = this.page.locator(this.fieldValidationErrors);
-        await expect(errors).toHaveCount(expectedCount);
-    }
-
-    async verifySpecificFieldError(field: string, expectedError: string) {
-        let fieldLocator: string;
-        
-        switch(field) {
-            case 'firstName':
-                fieldLocator = '#FirstName-error';
-                break;
-            case 'lastName':
-                fieldLocator = '#LastName-error';
-                break;
-            case 'email':
-                fieldLocator = '#Email-error';
-                break;
-            case 'password':
-                fieldLocator = '#Password-error';
-                break;
-            case 'confirmPassword':
-                fieldLocator = '#ConfirmPassword-error';
-                break;
-            default:
-                throw new Error(`Unknown field: ${field}`);
-        }
-        
-        await expect(this.page.locator(fieldLocator)).toHaveText(expectedError);
-    }
-
-    async verifyUrlContains(text: string) {
-        await expect(this.page).toHaveURL(new RegExp(text));
-    }
+  async verifyUrlContains(fragment: string) {
+    await expect(this.page).toHaveURL(new RegExp(fragment));
+  }
 }

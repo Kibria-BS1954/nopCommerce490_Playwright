@@ -64,6 +64,7 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../Pages/login.page';
 import ENV from '../utils/env';
 
+
 test.describe('Login Tests - nopCommerce 4.90', () => {
   let loginPage: LoginPage;
 
@@ -77,13 +78,15 @@ test.describe('Login Tests - nopCommerce 4.90', () => {
     await loginPage.verifyLoginSuccess();
   });
 
-  test('Invalid login should show error message', async () => {
-    await loginPage.login(ENV.INVALID_USER_EMAIL, ENV.INVALID_USER_PASSWORD);
-    await loginPage.verifyLoginFailure();
-
-    const errorText = await loginPage.getGeneralErrorText();
-    expect.soft(errorText).toContain('Login was unsuccessful');
+  test('Invalid login should show error message', async ({page}) => {
+  await loginPage.login(ENV.INVALID_USER_EMAIL, ENV.INVALID_USER_PASSWORD);
+  await test.step('Verify general error message', async () => {
+    const actualError = await loginPage.getGeneralErrorText();
+    console.log('General error message:', actualError);
+    const expectedError = 'Login was unsuccessful. Please correct the errors and try again.No customer account found';
+    expect.soft(actualError).toContain(expectedError);
   });
+});
 
   test('Empty credentials should show field validation errors', async () => {
     await loginPage.login(ENV.EMPTY_USER_EMAIL, ENV.EMPTY_USER_PASSWORD);
@@ -102,7 +105,7 @@ test.describe('Login Tests - nopCommerce 4.90', () => {
     await test.step('Verify invalid email format error message', async () => {
       const actualError = await loginPage.getEmailErrorText();
       console.log('Email format error message:', actualError);
-      expect.soft(actualError).toMatch(/Please enter a valid email address|Wrong email/i);
+      expect.soft(actualError).toMatch("Please enter a valid email address");
     });
   });
 
